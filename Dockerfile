@@ -12,8 +12,8 @@ RUN emerge -qv dev-vcs/git \
                virtual/libelf \
                sys-firmware/intel-microcode \
                sys-kernel/linux-firmware && \
+    mv /output/linux/config .config && \
     cd /output/linux && \
-    mv /config .config && \
     make -j3 && \
     kernel_version=$(make kernelversion) && \
     mv arch/x86_64/boot/bzImage "/output/bzImage-${kernel_version}" && \
