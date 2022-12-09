@@ -12,7 +12,6 @@ RUN emerge -qv dev-vcs/git \
                virtual/libelf \
                sys-firmware/intel-microcode \
                sys-kernel/linux-firmware && \
-    mv /output/linux/config .config && \
     cd /output/linux && \
     make -j3 && \
     kernel_version=$(make kernelversion) && \
