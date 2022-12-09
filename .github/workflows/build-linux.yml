@@ -30,7 +30,11 @@ jobs:
       - name: Build Linux Kernel
         run: |
           sudo ./image-builder/image-builder install
-          BUILD_USE_CONTAINER=1 KERNEL_FLAVOUR="x230" image-builder build linux-kernel
+          BUILD_USE_CONTAINER=1 \
+          KERNEL_FLAVOUR="x230" image-builder build linux-kernel
+          BUILD_TARGET_ARCH="arm64" \
+          BUILD_USE_CONTAINER=1 \
+          KERNEL_FLAVOUR="x230" image-builder build linux-kernel
 
       - name: Release
         uses: "marvinpinto/action-automatic-releases@latest"
