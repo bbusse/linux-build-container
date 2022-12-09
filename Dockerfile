@@ -1,3 +1,4 @@
+ARG KERNEL_VERSION
 FROM gentoo/portage:latest as portage
 FROM gentoo/stage3:latest
 
@@ -7,6 +8,8 @@ FROM gentoo/stage3:latest
 COPY --from=portage /var/db/repos/gentoo /var/db/repos/gentoo
 ADD make.conf /etc/portage/
 
+ARG KERNEL_VERSION
+
 # Build
 RUN emerge -qv dev-vcs/git \
                virtual/libelf \
@@ -14,6 +17,5 @@ RUN emerge -qv dev-vcs/git \
                sys-kernel/linux-firmware && \
     cd /output/linux && \
     make -j3 && \
-    kernel_version=$(make kernelversion) && \
-    mv arch/x86_64/boot/bzImage "/output/bzImage-${kernel_version}" && \
-    sha384sum "/output/bzImage-${kernel_version}" > "/output/bzImage-${kernel_version}.sha384"
+    mv arch/x86_64/boot/bzImage "/output/bzImage-${KERNEL_VERSION}" && \
+    sha384sum "/output/bzImage-${KERNEL_VERSION}" > "/output/bzImage-${kernel_version}.sha384"
