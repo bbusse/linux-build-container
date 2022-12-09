@@ -1,0 +1,53 @@
+---
+name: Build and release
+
+on:
+  push:
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    paths-ignore:
+      - '**.md'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Checkout image-builder
+        uses: actions/checkout@v3
+        with:
+          repository: 'OpsBoost/image-builder'
+          path: 'image-builder'
+          ref: 'main'
+
+      - name: Set version
+        run: echo "KERNEL_VERSION=$(make kernelversion)" >> $GITHUB_ENV
+
+      - name: Build Linux Kernel
+        run: |
+          sudo ./image-builder/image-builder install
+          sudo BUILD_USE_CONTAINER=1 KERNEL_FLAVOUR="x230" image-builder build linux-kernel
+
+      - name: Release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          automatic_release_tag: "latest"
+          files: |
+            /output/bzImage-${{ env.KERNEL_VERSION }}
+            /output/bzImage-${{ env.KERNEL_VERSION }}.sha384
+
+      - name: Release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          automatic_release_tag: "latest"
+          files: |
+            output/bzImage-${{ env.KERNEL_VERSION }}
+            output/bzImage-${{ env.KERNEL_VERSION }}.sha384
